@@ -1,6 +1,9 @@
-package org.example.taller2.entity;
+package org.example.taller2.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Entity
@@ -77,5 +80,13 @@ public class Libro{
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public Libro(Long id, String titulo, int anioPublicacion, boolean disponibilidad, String descripcion) {
+        this.id = id;
+        this.titulo = titulo;
+        this.anioPublicacion = anioPublicacion;
+        this.disponibilidad = disponibilidad;
+        this.descripcion = descripcion;
     }
 }

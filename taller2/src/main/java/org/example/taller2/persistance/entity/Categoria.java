@@ -1,13 +1,18 @@
-package org.example.taller2.entity;
+package org.example.taller2.persistance.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +21,12 @@ public class Categoria {
     private String descripcion;
 
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
-    private List<Libro> libros;
+    private List<Libro> libros = new ArrayList<Libro>();
+
+    public void addLibro(Libro libro) {
+        libros.add(libro);
+        libro.setCategoria(this);
+    }
 
     public Long getId() {
         return id;

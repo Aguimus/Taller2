@@ -2,8 +2,7 @@ package org.example.taller2.controller;
 
 import org.example.taller2.persistance.entity.*;
 import org.example.taller2.persistance.repositories.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.example.taller2.service.ServicioLibro;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +12,9 @@ import java.util.*;
 @RestController
 @RequestMapping(path = "/")
 public class controller {
+
+    @Autowired
+    private ServicioLibro servicioLibro;
 
     @Autowired
     private AutorRepository autorRepository;
@@ -47,15 +49,14 @@ public class controller {
     }
     @GetMapping("/librosPorCategoria")
     public List<Libro> obtenerLibrosPorCategoria(@RequestBody Map<String, Object> datos){
-        System.out.println((String) datos.get("nombre"));
-        Categoria c = categoriaRepository.findByNombre((String) datos.get("nombre"));
+        Categoria c = categoriaRepository.findFirstByNombreContaining((String) datos.get("nombre"));
         return c.getLibros();
     }
 
     @GetMapping("/librosPorAutor")
     public List<Libro> obtenerLibrosPorAutor(@RequestBody Map<String, Object> datos){
         System.out.println((String) datos.get("nombre"));
-        Autor a = autorRepository.findByNombre((String) datos.get("nombre"));
+        Autor a = autorRepository.findFirstByNombreContaining((String) datos.get("nombre"));
         return a.getLibros();
     }
 
@@ -76,50 +77,77 @@ public class controller {
 
 
     // Obtener un libro por su ID
-    @GetMapping("/libros/{id}")
-    public ResponseEntity<Libro> obtenerLibroPorId(@PathVariable Long id) {
-        return libroRepository.findById(id)
-                .map(libro -> ResponseEntity.ok(libro))
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/librosPorId")
+    public Libro obtenerLibroPorId(@RequestBody Map<String, Object> datos) {
+        return libroRepository.findById(Long.parseLong((String) datos.get("id"))).orElse(null);
+    }
+
+    @GetMapping("/librosPorTitulo")
+    public Map<String, Object> obtenerLibroPorTitulo(@RequestBody Map<String, Object> datos) {
+        Libro libro = libroRepository.findByTituloContaining((String) datos.get("titulo"));
+
+        if (libro != null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", libro.getId());
+            response.put("titulo", libro.getTitulo());
+            response.put("descripcion", libro.getDescripcion());
+            response.put("anioPublicacion", libro.getAnioPublicacion());
+            response.put("disponibilidad", libro.isDisponibilidad());
+            response.put("autor", libro.getAutor().getNombre());
+            response.put("categoria", libro.getCategoria().getNombre());
+
+            return response;
+        } else {
+            return servicioLibro.getLibrobyName((String) datos.get("titulo"));
+        }
     }
 
     // Crear un nuevo libro
     @PostMapping("/libros")
-    public Libro crearProducto(@RequestBody Libro libro) {
-        Autor autor = autorRepository.findByNombre(libro.getNombreAutor());
-        libro.setAutor(autor);
-        Categoria categoria = categoriaRepository.findByNombre(libro.getNombreCategoria());
-        libro.setCategoria(categoria);
+    public Libro crearProducto(@RequestBody Map<String, Object> datos) {
+        Libro libro = new Libro((String) datos.get("titulo"), Integer.parseInt((String) datos.get("anioPublicacion")),
+                (Boolean) datos.get("disponibilidad"), (String) datos.get("descripcion"));
+        Autor a = autorRepository.findFirstByNombreContaining((String) datos.get("nombreAutor"));
+        Categoria c = categoriaRepository.findFirstByNombreContaining((String) datos.get("nombreCategoria"));
+        libro.setAutor(a);
+        libro.setCategoria(c);
+        a.addLibro(libro);
+        c.addLibro(libro);
         return libroRepository.save(libro);
     }
 
 
     // Actualizar un libro
-    @PutMapping("/libros/{id}")
-    public ResponseEntity<Libro> actualizarProducto(@PathVariable Long id, @RequestBody Libro libroDetalles) {
-        return libroRepository.findById(id)
-                .map(libro -> {
-                    libro.setTitulo(libroDetalles.getTitulo());
-                    libro.setAnioPublicacion(libroDetalles.getAnioPublicacion());
-                    libro.setDescripcion(libroDetalles.getDescripcion());
-                    libro.setAutor(autorRepository.findById(libroDetalles.getAutor().getId()).get());
-                    libro.setCategoria(categoriaRepository.findById(libroDetalles.getCategoria().getId()).get());
-                    libro.setDisponibilidad(libroDetalles.isDisponibilidad());
-                    libro.setDescripcion(libroDetalles.getDescripcion());
-                    return ResponseEntity.ok(libroRepository.save(libro));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @PutMapping("/actualizarLibros")
+    public Libro actualizarProducto(@RequestBody Map<String, Object> datos) {
+        Libro libro = libroRepository.findById(Long.parseLong((String) datos.get("id"))).orElse(null);
+        Autor a = autorRepository.findFirstByNombreContaining((String) datos.get("nombreAutor"));
+        Categoria c = categoriaRepository.findFirstByNombreContaining((String) datos.get("nombreCategoria"));
+        if (libro != null) {
+            libro.setTitulo((String) datos.get("titulo"));
+            libro.setAnioPublicacion(Integer.parseInt((String) datos.get("anioPublicacion")));
+            libro.setDescripcion((String) datos.get("descripcion"));
+            libro.setAutor(a);
+            libro.setCategoria(c);
+            libro.setDisponibilidad(Boolean.parseBoolean((String) datos.get("disponibilidad")));
+            return libroRepository.save(libro);
+        } else {
+            return libro;
+        }
     }
 
     // Eliminar un libro
-    @DeleteMapping("/libros/{id}")
-    public ResponseEntity<Void> eliminarLibro(@PathVariable Long id) {
-        return libroRepository.findById(id)
-                .map(libro -> {
-                    libroRepository.delete(libro);
-                    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @DeleteMapping("/eliminarLibros")
+    public Map<String, String> eliminarLibro(@RequestBody Map<String, Object> datos) {
+        Map<String, String> response = new HashMap<>();
+        if (libroRepository.existsById(Long.parseLong(datos.get("id").toString()))) {
+            libroRepository.deleteById(Long.parseLong(datos.get("id").toString()));
+            response.put("message", "Eliminado con exito");
+            return response;
+        } else {
+            response.put("message", "No se puedo encontrar el libro");
+            return response;
+        }
     }
 
     // Crear un nuevo cliente

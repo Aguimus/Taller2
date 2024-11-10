@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 public class Prestamo_libro {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "idPrestamo", nullable = false)
+    @JoinColumn(name = "id_prestamo", nullable = false)
     private Prestamo prestamo;
 
     @ManyToOne
-    @JoinColumn(name = "idLibro", nullable = false)
+    @JoinColumn(name = "id_libro", nullable = false)
     private Libro libro;
 
     public Prestamo getPrestamo() {

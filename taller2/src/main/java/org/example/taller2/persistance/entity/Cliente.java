@@ -1,9 +1,7 @@
 package org.example.taller2.persistance.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import ch.qos.logback.core.net.server.Client;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,17 +10,16 @@ import java.util.List;
 
 
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Cliente {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String nombre;
     private String correo;
     private int telefono;
     private Boolean estadoCuenta;
+
 
 
 
@@ -65,5 +62,14 @@ public class Cliente {
     public void setEstadoCuenta(Boolean estadoCuenta) {
         this.estadoCuenta = estadoCuenta;
     }
+
+    public Cliente(String nombre, String correo, int telefono, Boolean estadoCuenta) {
+
+        this.nombre = nombre;
+        this.correo = correo;
+        this.telefono = telefono;
+        this.estadoCuenta = estadoCuenta;
+    }
+    public Cliente(){}
 
 }

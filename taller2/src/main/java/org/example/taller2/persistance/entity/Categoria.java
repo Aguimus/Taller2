@@ -1,5 +1,6 @@
 package org.example.taller2.persistance.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,17 +11,15 @@ import java.util.List;
 
 
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Categoria {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String nombre;
     private String descripcion;
 
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Libro> libros = new ArrayList<Libro>();
 
     public void addLibro(Libro libro) {
@@ -58,5 +57,8 @@ public class Categoria {
 
     public void setLibros(List<Libro> libros) {
         this.libros = libros;
+    }
+
+    public Categoria() {
     }
 }

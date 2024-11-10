@@ -1,15 +1,19 @@
 package org.example.taller2.persistance.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 public class Libro{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
 
@@ -18,6 +22,11 @@ public class Libro{
     private boolean disponibilidad;
     private String descripcion;
 
+    @Transient
+    private String nombreAutor;
+    @Transient
+    private String nombreCategoria;
+
     @ManyToOne
     @JoinColumn(name = "idAutor", nullable = false)
     private Autor autor;
@@ -25,6 +34,18 @@ public class Libro{
     @ManyToOne
     @JoinColumn(name = "idCategoria", nullable = false)
     private Categoria categoria;
+
+    @OneToMany(mappedBy = "libro", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Prestamo_libro> prestamos = new ArrayList<Prestamo_libro>();
+
+    public List<Prestamo_libro> getPrestamos() {
+        return prestamos;
+    }
+
+    public void setPrestamos(List<Prestamo_libro> prestamos) {
+        this.prestamos = prestamos;
+    }
 
     public Long getId() {
         return id;
@@ -82,11 +103,29 @@ public class Libro{
         this.categoria = categoria;
     }
 
-    public Libro(Long id, String titulo, int anioPublicacion, boolean disponibilidad, String descripcion) {
-        this.id = id;
+    public String getNombreAutor() {
+        return nombreAutor;
+    }
+
+    public void setNombreAutor(String nombreAutor) {
+        this.nombreAutor = nombreAutor;
+    }
+
+    public String getNombreCategoria() {
+        return nombreCategoria;
+    }
+
+    public void setNombreCategoria(String nombreCategoria) {
+        this.nombreCategoria = nombreCategoria;
+    }
+
+    public Libro(String titulo, int anioPublicacion, boolean disponibilidad, String descripcion) {
         this.titulo = titulo;
         this.anioPublicacion = anioPublicacion;
         this.disponibilidad = disponibilidad;
         this.descripcion = descripcion;
+    }
+
+    public Libro() {
     }
 }

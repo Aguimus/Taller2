@@ -18,14 +18,14 @@ CREATE TABLE "Libro"(
     "anioPublicacion" INTEGER NOT NULL,
     "disponibilidad" BOOLEAN NOT NULL,
     "descripcion" VARCHAR(255) NOT NULL,
-    "idCategoria" INTEGER NOT NULL,
-    "idAutor" INTEGER NOT NULL
+    "idCategoria" INTEGER,
+    "idAutor" INTEGER
 );
 ALTER TABLE
     "Libro" ADD PRIMARY KEY("id");
 CREATE TABLE "Prestamo"(
     "id" SERIAL NOT NULL,
-    "idCliente" INTEGER NOT NULL,
+    "idCliente" INTEGER,
     "fechaInicio" DATE NOT NULL,
     "fechaFin" DATE NOT NULL
 );

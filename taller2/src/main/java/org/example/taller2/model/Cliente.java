@@ -1,11 +1,13 @@
 package org.example.taller2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,7 +17,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="cliente", uniqueConstraints = {@UniqueConstraint(columnNames = {"correo"})})
 public class Cliente implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,10 +29,14 @@ public class Cliente implements UserDetails {
 
     @Column(nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
 
     private Role role;
 
+    @OneToMany (mappedBy = "cliente", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Prestamo> prestamos = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

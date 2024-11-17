@@ -3,6 +3,7 @@ package org.example.taller2.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.taller2.jwt.JwtService;
 import org.example.taller2.model.Cliente;
+import org.example.taller2.model.Role;
 import org.example.taller2.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class AuthService {
                 .nombre(request.getNombre())
                 .telefono(request.getTelefono())
                 .estadoCuenta(request.isEstadoCuenta())
+                .role(Role.USER)
                 .build();
 
         clienteRepository.save(cliente);

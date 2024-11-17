@@ -1,7 +1,7 @@
 package org.example.taller2.controller;
 
-import org.example.taller2.persistance.entity.*;
-import org.example.taller2.persistance.repositories.*;
+import org.example.taller2.model.*;
+import org.example.taller2.repository.*;
 import org.example.taller2.service.ServicioLibro;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,9 +131,7 @@ public class controller {
             libro.setCategoria(c);
             libro.setDisponibilidad(Boolean.parseBoolean((String) datos.get("disponibilidad")));
             return libroRepository.save(libro);
-        } else {
-            return libro;
-        }
+        } else return libro;
     }
 
     // Eliminar un libro

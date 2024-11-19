@@ -27,7 +27,7 @@ public class Cliente implements UserDetails {
     private int telefono;
     private Boolean estadoCuenta;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
     private String password;
@@ -43,10 +43,6 @@ public class Cliente implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    @Override
-    public String getUsername() {
-        return "";
-    }
 
     @Override
     public boolean isAccountNonExpired() {

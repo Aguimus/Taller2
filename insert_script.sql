@@ -6,12 +6,12 @@ INSERT INTO categoria ("nombre", "descripcion") VALUES
 ('Ciencia', 'Libros sobre temas científicos'),
 ('Historia', 'Libros históricos');
 
--- Insertar registros en la tabla Cliente
-INSERT INTO cliente ("nombre", "correo", "telefono") VALUES
-('Juan Pérez', 'juan.perez@example.com', 1234),
-('Ana Gómez', 'ana.gomez@example.com', 9876),
-('Luis Rodríguez', 'luis.rodriguez@example.com', 4561),
-('María López', 'maria.lopez@example.com', 7891);
+-- Insertar registros en la tabla Autor
+INSERT INTO autor ("nombre", "pais_origen") VALUES
+('Stephen Hawking', 'Reino Unido'),
+('Yuval Noah Harari', 'Israel'),
+('George Orwell', 'Reino Unido'),
+('Gabriel García Márquez', 'Colombia');
 
 -- Insertar registros en la tabla Libro
 INSERT INTO libro ("titulo", "anio_publicacion", "disponibilidad", "descripcion", "id_categoria", "id_autor") VALUES
@@ -33,3 +33,10 @@ INSERT INTO prestamo_libro ("id_prestamo", "id_libro") VALUES
 (6, 5),
 (7, 6),
 (8, 7);
+
+-- Insertar registros en la tabla Cliente
+INSERT INTO cliente ("nombre", "correo", "telefono") VALUES
+('Juan Pérez', 'juan.perez@example.com', 1234),
+('Ana Gómez', 'ana.gomez@example.com', 9876),
+('Luis Rodríguez', 'luis.rodriguez@example.com', 4561),
+('María López', 'maria.lopez@example.com', 7891);

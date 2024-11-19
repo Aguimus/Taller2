@@ -30,10 +30,12 @@ public class JwtService {
     }
 
     private String getToken(Map<String, Object> extraClaims, UserDetails cliente) {
+        Cliente cliente1 = (Cliente) cliente;
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(cliente.getUsername())
+                .claim("role", cliente1.getRole().name())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getKey(), SignatureAlgorithm.HS256)

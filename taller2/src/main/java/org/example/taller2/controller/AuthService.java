@@ -36,7 +36,7 @@ public class AuthService {
                 .nombre(request.getNombre())
                 .telefono(request.getTelefono())
                 .estadoCuenta(request.isEstadoCuenta())
-                .role(Role.USER)
+                .role(Role.ADMIN)
                 .build();
 
         clienteRepository.save(cliente);
